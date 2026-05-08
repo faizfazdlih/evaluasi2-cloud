@@ -274,7 +274,7 @@ export const Navbar = () => {
                 <span style={{ color: '#fff', fontSize: '0.7rem', fontWeight: 700 }}>!</span>
               </div>
               <span className="logo-text">
-                TERAS<span> WARGA</span>
+                TERAS WARGA<span>WLE</span>
               </span>
             </Link>
 
