@@ -84,6 +84,7 @@ jobs:
           host: ${{ env.SSH_HOST }}
           username: ${{ env.SSH_USER }}
           key: ${{ env.SSH_KEY }}
+          command_timeout: 30m
           script: |
             cd ${{ env.SSH_APP_DIR }}
             git pull
