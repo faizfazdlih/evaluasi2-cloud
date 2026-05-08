@@ -87,5 +87,10 @@ jobs:
           script: |
             cd ${{ env.SSH_APP_DIR }}
             git pull
-            docker-compose down
-            docker-compose up -d --build
+            if command -v docker-compose >/dev/null 2>&1; then
+              docker-compose down
+              docker-compose up -d --build
+            else
+              docker compose down
+              docker compose up -d --build
+            fi
