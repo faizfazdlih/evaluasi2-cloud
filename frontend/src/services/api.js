@@ -1,7 +1,11 @@
 import axios from 'axios';
 
 const fallbackBaseUrl = `${window.location.protocol}//${window.location.hostname}:5000/api`;
-export const API_BASE_URL = process.env.REACT_APP_API_URL || fallbackBaseUrl;
+const envBaseUrl = process.env.REACT_APP_API_URL;
+const isLocalHost = ['localhost', '127.0.0.1'].includes(window.location.hostname);
+const shouldIgnoreLocalEnv = !isLocalHost && envBaseUrl && envBaseUrl.includes('localhost');
+
+export const API_BASE_URL = shouldIgnoreLocalEnv ? fallbackBaseUrl : (envBaseUrl || fallbackBaseUrl);
 export const FILE_BASE_URL = API_BASE_URL.replace(/\/api\/?$/, '');
 
 const api = axios.create({
