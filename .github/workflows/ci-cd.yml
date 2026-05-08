@@ -65,18 +65,23 @@ jobs:
     name: Deploy (SSH)
     runs-on: ubuntu-latest
     needs: [docker-build]
-    if: ${{ (secrets.SSH_HOST || '') != '' && (secrets.SSH_USER || '') != '' && (secrets.SSH_KEY || '') != '' }}
+    env:
+      SSH_HOST: ${{ secrets.SSH_HOST }}
+      SSH_USER: ${{ secrets.SSH_USER }}
+      SSH_KEY: ${{ secrets.SSH_KEY }}
+      SSH_APP_DIR: ${{ secrets.SSH_APP_DIR }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Deploy via SSH
+        if: ${{ env.SSH_HOST != '' && env.SSH_USER != '' && env.SSH_KEY != '' && env.SSH_APP_DIR != '' }}
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
+          host: ${{ env.SSH_HOST }}
+          username: ${{ env.SSH_USER }}
+          key: ${{ env.SSH_KEY }}
           script: |
-            cd ${{ secrets.SSH_APP_DIR }}
+            cd ${{ env.SSH_APP_DIR }}
             git pull
             docker compose down
             docker compose up -d --build
