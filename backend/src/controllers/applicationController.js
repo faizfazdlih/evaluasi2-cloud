@@ -28,6 +28,10 @@ const uploadToS3 = async (file) => {
     ContentType: file.mimetype
   }));
 
+  const cdnBase = process.env.S3_CDN_BASE?.replace(/\/$/, '');
+  if (cdnBase) {
+    return `${cdnBase}/${key}`;
+  }
   return `https://${process.env.S3_BUCKET}.s3.${process.env.S3_REGION}.amazonaws.com/${key}`;
 };
 
