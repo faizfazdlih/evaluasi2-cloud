@@ -107,6 +107,7 @@ export const AdminDashboard = () => {
 
   const getAttachmentUrl = (attachmentPath) => {
     if (!attachmentPath) return '';
+    if (/^https?:\/\//i.test(attachmentPath)) return attachmentPath;
     return `${FILE_BASE_URL}/${attachmentPath}`;
   };
 

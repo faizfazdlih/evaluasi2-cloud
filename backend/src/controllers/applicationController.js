@@ -1,5 +1,36 @@
 const Application = require('../models/Application');
 const path = require('path');
+const crypto = require('crypto');
+const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
+
+const s3Client = new S3Client({
+  region: process.env.S3_REGION,
+  credentials: process.env.S3_ACCESS_KEY_ID && process.env.S3_SECRET_ACCESS_KEY
+    ? {
+      accessKeyId: process.env.S3_ACCESS_KEY_ID,
+      secretAccessKey: process.env.S3_SECRET_ACCESS_KEY
+    }
+    : undefined
+});
+
+const uploadToS3 = async (file) => {
+  if (!file || !process.env.S3_BUCKET) {
+    return null;
+  }
+
+  const extension = path.extname(file.originalname || '') || '';
+  const key = `uploads/${Date.now()}-${crypto.randomBytes(8).toString('hex')}${extension}`;
+
+  await s3Client.send(new PutObjectCommand({
+    Bucket: process.env.S3_BUCKET,
+    Key: key,
+    Body: file.buffer,
+    ContentType: file.mimetype,
+    ACL: 'public-read'
+  }));
+
+  return `https://${process.env.S3_BUCKET}.s3.${process.env.S3_REGION}.amazonaws.com/${key}`;
+};
 
 const getAllApplications = async (req, res) => {
   try {
@@ -52,7 +83,7 @@ const createApplication = async (req, res) => {
     }
 
     const file = req.file;
-    const attachmentPath = file ? path.posix.join('uploads', file.filename) : null;
+    const attachmentPath = file ? await uploadToS3(file) : null;
 
     const created = await Application.create({
       user_id: req.user.id,
