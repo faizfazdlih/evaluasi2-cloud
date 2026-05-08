@@ -1,4 +1,4 @@
-FROM node:18-alpine AS build
+FROM node:20-alpine AS build
 
 WORKDIR /app
 
@@ -12,6 +12,8 @@ ENV REACT_APP_API_URL=$REACT_APP_API_URL
 ENV CI=false
 ENV GENERATE_SOURCEMAP=false
 ENV NODE_OPTIONS=--max_old_space_size=4096
+ENV DISABLE_ESLINT_PLUGIN=true
+ENV SKIP_PREFLIGHT_CHECK=true
 
 RUN npm run build
 
