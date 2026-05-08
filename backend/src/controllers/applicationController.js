@@ -25,8 +25,7 @@ const uploadToS3 = async (file) => {
     Bucket: process.env.S3_BUCKET,
     Key: key,
     Body: file.buffer,
-    ContentType: file.mimetype,
-    ACL: 'public-read'
+    ContentType: file.mimetype
   }));
 
   return `https://${process.env.S3_BUCKET}.s3.${process.env.S3_REGION}.amazonaws.com/${key}`;
